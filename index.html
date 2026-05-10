@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <!-- SEO -->
+  <meta name="description" content="Bunofeed – Natural peanut butter, rolled oats & muesli. Clean ingredients, no preservatives, high protein. Shop on Amazon & Flipkart."/>
+  <meta name="theme-color" content="#6B2D0E"/>
+  <!-- iOS Web App -->
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+
+  <title>Bunofeed – Companion in your Healthy Lifestyle</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- =========================================================
+       CAMPAIGN BANNER (shown/hidden by script.js based on products.js)
+       ========================================================= -->
+  <div id="campaign-banner" role="alert" aria-live="polite"></div>
+
+  <!-- =========================================================
+       NAVBAR
+       ========================================================= -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="#home" class="logo" aria-label="Bunofeed Home">
+        <img src="https://i.ibb.co/5W7myd6t/Brand-logo-2.png" alt="Bunofeed Logo" class="logo-img"/>
+      </a>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+        <a href="#home"    class="nav-link active">Home</a>
+        <a href="shop.html" class="nav-link">Products</a>
+        <a href="#about"   class="nav-link">About</a>
+        <a href="#contact" class="nav-link">Contact</a>
+        <button class="search-btn" aria-label="Search">
+          <i class="fas fa-search" aria-hidden="true"></i>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- =========================================================
+       HERO SECTION
+       ========================================================= -->
+  <section class="hero" id="home">
+    <div class="hero-content">
+      <p class="hero-sub" id="hero-sub">Welcome to Bunofeed</p>
+      <h1 class="hero-title" id="hero-title">
+        Companion in your<br/>
+        <span class="hero-highlight">Healthy Lifestyle</span>
+      </h1>
+      <p class="hero-desc" id="hero-desc">
+        Fuel your body with nature's finest — real, healthy food products. No nasties. Just goodness.   </p>
+      <div class="hero-btns">
+        <a href="#shop" class="btn btn-primary" id="hero-cta">
+          <i class="fas fa-shopping-bag" aria-hidden="true"></i> Shop Now
+        </a>
+        <a href="#about" class="btn btn-outline">Our Story</a>
+      </div>
+    </div>
+    <!-- Hero visual: replaced with image if products.js hero.image is set -->
+    <div class="hero-image" aria-hidden="true">
+      <div class="hero-img-wrap">
+        <div class="food-circle food-circle-1">🥜</div>
+        <div class="food-circle food-circle-2">🌾</div>
+        <div class="food-circle food-circle-3">🥣</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       FEATURES STRIP
+       ========================================================= -->
+  <section class="features-strip" aria-label="Key features">
+    <div class="feature-item">
+      <i class="fas fa-leaf" aria-hidden="true"></i>
+      <span>Clean Ingredients</span>
+    </div>
+    <div class="feature-item">
+      <i class="fas fa-certificate" aria-hidden="true"></i>
+      <span>No Artificial Additives</span>
+    </div>
+    <div class="feature-item">
+      <i class="fas fa-dumbbell" aria-hidden="true"></i>
+      <span>High Protein</span>
+    </div>
+    <div class="feature-item">
+      <i class="fas fa-seedling" aria-hidden="true"></i>
+      <span>Vegetarian Friendly</span>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       BEST SELLERS (homepage only — bestSeller: true products)
+       Populated dynamically from products.js via script.js
+       ========================================================= -->
+  <section class="products" id="shop">
+    <div class="section-header">
+      <p class="section-tag">Best Sellers</p>
+      <h2>Customer <span>Favourites</span></h2>
+      <p class="section-desc">Our most loved products — handcrafted with clean ingredients.</p>
+    </div>
+    <!-- Best-seller cards injected here by script.js -->
+    <div class="products-grid" id="products-grid"></div>
+    <div style="text-align:center;margin-top:2.5rem;">
+      <a href="shop.html" class="btn btn-primary" style="padding:14px 40px;font-size:1rem;">
+        <i class="fas fa-store" aria-hidden="true"></i> View All Products
+      </a>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       WHY BUNOFEED
+       ========================================================= -->
+  <section class="why-us" aria-label="Why choose Bunofeed">
+    <div class="why-text">
+      <p class="section-tag">Why Choose Us</p>
+      <h2>Clean Label.<br/><span>Real Ingredients.</span></h2>
+      <p>At Bunofeed, we are committed to making nutrition simple, trustworthy, and effective. Every product is thoughtfully developed using carefully selected ingredients, with a focus on quality, consistency, and transparency.
+
+          We prioritise formulations that are clean, balanced, and aligned with modern nutritional needs—without unnecessary additives or compromises.</p>
+      <ul class="why-list">
+        <li><i class="fas fa-check-circle" aria-hidden="true"></i> Clean, thoughtfully selected ingredients</li>
+        <li><i class="fas fa-check-circle" aria-hidden="true"></i> No unnecessary additives or fillers</li>
+        <li><i class="fas fa-check-circle" aria-hidden="true"></i> Responsibly sourced raw materials</li>
+        <li><i class="fas fa-check-circle" aria-hidden="true"></i> Quality tested for safety, purity, and consistency</li>
+      </ul>
+      <a href="#about" class="btn btn-primary">Our Story</a>
+    </div>
+    <div class="why-visual">
+      <div class="why-stat-card reveal">
+        <span class="stat-num">Clean</span>
+        <span class="stat-label">Label</span>
+      </div>
+      <div class="why-stat-card accent reveal">
+        <span class="stat-num">Smart</span>
+        <span class="stat-label">Nutrition</span>
+      </div>
+      <div class="why-stat-card reveal">
+        <span class="stat-num">Tested</span>
+        <span class="stat-label">and Verified</span>
+      </div>
+      <div class="why-stat-card accent reveal">
+        <span class="stat-num">Ingredient</span>
+        <span class="stat-label">Transparency</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       ABOUT SECTION
+       ========================================================= -->
+  <section class="about" id="about">
+    <div class="about-visual">
+      <div class="about-badge">Est. 2026</div>
+      <div class="about-img-box">
+        <!--
+          TO CHANGE THIS IMAGE:
+          Replace the src below with your image URL.
+          Or keep the logo as-is.
+        -->
+        <img src="https://i.ibb.co/5W7myd6t/Brand-logo-2.png" alt="Bunofeed Logo"/>
+      </div>
+    </div>
+    <div class="about-text">
+      <p class="section-tag">About Bunofeed</p>
+      <h2>Born from a Passion for <span>Clean Eating</span></h2>
+      <p>Bunofeed started with a simple observation — finding genuinely good, honest food products isn’t as easy as it should be. Too often, products that appear healthy on the outside don’t reflect the same quality in their ingredients. We began with a clear intention: to offer food products that are straightforward, reliable, and made with a focus on quality. Instead of overcomplicating things, we focus on selecting and developing products that meet practical expectations — clean compositions, consistent taste, and dependable sourcing. As we continue to grow our range across categories, our approach remains the same. Every product is chosen with care, keeping in mind everyday use — whether it’s part of a fitness routine or a regular household staple. At Bunofeed, the goal is simple: to build a brand people can rely on for products that are transparent in what they offer and consistent in what they deliver.</p>
+      <p>Every jar, every bag, every product carries our promise — wholesome ingredients, transparent labels, and a taste that keeps you coming back.</p>
+      <a href="#shop" class="btn btn-primary" style="margin-top:1rem;">
+        <i class="fas fa-shopping-bag" aria-hidden="true"></i> Shop Products
+      </a>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       CUSTOMER FEEDBACK SECTION
+       ========================================================= -->
+  <section class="feedback-section" id="feedback">
+    <div class="feedback-inner">
+      <div class="feedback-left">
+        <h2>We'd Love to <span>Hear From You!</span></h2>
+        <div class="feedback-perks">
+          <div class="perk-item">
+            <i class="fas fa-star" aria-hidden="true"></i>
+            <span>Your review helps other customers</span>
+          </div>
+          <div class="perk-item">
+            <i class="fas fa-shield-alt" aria-hidden="true"></i>
+            <span>Your info is safe with us</span>
+          </div>
+          <div class="perk-item">
+            <i class="fas fa-heart" aria-hidden="true"></i>
+            <span>We read every single message</span>
+          </div>
+        </div>
+      </div>
+      <div class="feedback-right">
+        <p class="presubmitnote">
+          Let us know what you think! Your honest feedback helps us grow and serve you better.
+        </p>
+        <!--
+          The href below is set dynamically from products.js → brand.feedbackFormUrl
+          You can also hardcode it here if preferred.
+        -->
+        <a href="#" data-feedback-link
+           target="_blank" rel="noopener noreferrer"
+           class="btn btn-primary feedback-submit">
+          <i class="fas fa-paper-plane" aria-hidden="true"></i> Submit Review
+        </a>
+        <p class="form-note">* We may feature your review on our website (with your permission).</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       FOOTER
+       ========================================================= -->
+  <footer class="footer" id="contact">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="https://i.ibb.co/5W7myd6t/Brand-logo-2.png" alt="Bunofeed Logo" class="logo-img footer-logo-img"/>
+        <p>Your companion in healthy living. Honest food for real people.</p>
+        <div class="social-links">
+          <a href="https://www.instagram.com" data-social="instagram" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <i class="fab fa-instagram" aria-hidden="true"></i>
+          </a>
+          <a href="https://www.facebook.com" data-social="facebook" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+            <i class="fab fa-facebook" aria-hidden="true"></i>
+          </a>
+          <a href="https://www.linkedin.com/in/akash-kumar-995739293" data-social="linkedin" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+            <i class="fab fa-linkedin" aria-hidden="true"></i>
+          </a>
+          <a href="https://www.youtube.com" data-social="youtube" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+            <i class="fab fa-youtube" aria-hidden="true"></i>
+          </a>
+          <a href="https://www.x.com" data-social="twitter" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter">
+            <i class="fab fa-x-twitter" aria-hidden="true"></i>
+          </a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="#home">Home</a>
+        <a href="#shop">Products</a>
+        <a href="#about">About</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="terms.html">Terms of Service</a>
+        <a href="privacy.html">Privacy Policy</a>
+      </div>
+      <div class="footer-col" id="contact">
+        <h4>Contact Us</h4>
+        <p>
+          <i class="fas fa-envelope" aria-hidden="true"></i>
+          <a href="mailto:bunofeedhelpdesk@gmail.com" data-email>
+            bunofeedhelpdesk@gmail.com
+          </a>
+        </p>
+        <p>
+          <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+          Bareilly, UP, India
+        </p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Bunofeed. All rights reserved. |
+        <a href="terms.html">Terms of Service</a> |
+        <a href="privacy.html">Privacy Policy</a>
+      </p>
+      <span class="footer-highlight">Made with ❤️ for healthy 💪 living.</span>
+    </div>
+  </footer>
+
+  <!-- Razorpay SDK (required for Buy Now on homepage) -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <!-- =========================================================
+       SCRIPTS
+       Load products.js FIRST, then script.js
+       ========================================================= -->
+  <script src="products.js"></script>
+  <script src="checkout.js"></script>
+  <script src="script.js"></script>
+
+</body>
+</html>
