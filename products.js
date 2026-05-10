@@ -40,7 +40,7 @@ window.BUNOFEED_DATA = {
       "name": "Dark Chocolate Peanut Butter Crunchy",
       "tagline": "Tasty, Crunchy & packed with protein.",
       "description": "Indulgent dark chocolate meets creamy roasted peanuts in a perfectly smooth spread crafted for taste and nutrition. Made with high-quality peanuts and rich cocoa, this protein-packed peanut butter delivers a deep chocolate flavor without compromising on wholesome ingredients.\nPerfect for:\n\n\nToasts & sandwiches\n\n\nSmoothies & shakes\n\n\nFruits & pancakes\n\n\nPre/post-workout meals\n\n\nStraight-from-the-jar cravings\n\n\nWhy you’ll love it:\n\n\nSmooth & creamy texture\n\n\nRich dark chocolate flavor\n\n\nGood source of plant-based protein\n\nEnergy-boosting healthy fats\n\n\nGreat for fitness & healthy snacking",
-      "price": 299,
+      "price": 1,
       "weight": "400g",
       "image": "https://i.ibb.co/psxqc3J/1-removebg-preview.png",
       "images": [
