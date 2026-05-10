@@ -32,7 +32,7 @@ window.BUNOFEED_DATA = {
   },
   "shipping": {
     "freeShippingAbove": 499,
-    "shippingCharge": 60
+    "shippingCharge": 0
   },
   "products": [
     {
