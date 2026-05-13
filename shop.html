@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="description" content="Bunofeed Products — Natural peanut butter, rolled oats, muesli and more. Clean ingredients, no preservatives, high protein."/>
+  <meta name="theme-color" content="#6B2D0E"/>
+  <title>Products – Bunofeed</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    /* ======================================================
+       SHOP PAGE — Extra Styles
+    ====================================================== */
+
+    /* Page hero */
+    .shop-hero {
+      background: var(--brown);
+      padding: 3.5rem 1.5rem 3rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .shop-hero::before {
+      content:'';
+      position:absolute;inset:0;
+      background:radial-gradient(ellipse at center,rgba(139,69,19,.4) 0%,transparent 70%);
+      pointer-events:none;
+    }
+    .shop-hero-inner { position:relative;z-index:1; }
+    .shop-hero .section-tag { background:rgba(255,255,255,.15);color:var(--white);margin-bottom:.8rem; }
+    .shop-hero h1 {
+      font-family:var(--font-head);font-size:clamp(1.9rem,5vw,3rem);
+      font-weight:800;color:var(--white);margin-bottom:.5rem;
+    }
+    .shop-hero p { color:rgba(255,255,255,.7);font-size:.97rem; }
+
+    /* Filter bar */
+    .filter-bar {
+      background:var(--white);
+      border-bottom:1px solid #f0e8e0;
+      padding:.9rem 1.5rem;
+      position:sticky;top:var(--nav-height);z-index:90;
+    }
+    .filter-inner {
+      max-width:1280px;margin:0 auto;
+      display:flex;align-items:center;gap:.7rem;
+      flex-wrap:wrap;
+    }
+    .filter-btn {
+      padding:7px 20px;border-radius:50px;
+      font-family:var(--font-head);font-weight:600;font-size:.82rem;
+      border:2px solid #e0d4cc;background:var(--white);
+      color:var(--gray);cursor:pointer;transition:var(--transition);
+      -webkit-appearance:none;
+    }
+    .filter-btn:hover  { border-color:var(--orange);color:var(--orange); }
+    .filter-btn.active { background:var(--orange);color:var(--white);border-color:var(--orange); }
+    .filter-count {
+      margin-left:auto;font-size:.82rem;color:var(--gray);font-weight:500;
+      white-space:nowrap;
+    }
+
+    /* Products section */
+    .shop-section { padding:3rem 1.5rem 5rem;background:var(--off-white); }
+    .shop-grid {
+      max-width:1280px;margin:0 auto;
+      display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;
+    }
+
+    /* Empty state */
+    .empty-state {
+      grid-column:1/-1;text-align:center;padding:4rem 1rem;
+    }
+    .empty-state i  { font-size:3rem;color:#ddd;margin-bottom:1rem;display:block; }
+    .empty-state p  { color:var(--gray);font-size:1rem; }
+
+    /* ======================================================
+       PRODUCT DETAIL MODAL
+    ====================================================== */
+    .modal-overlay {
+      display:none;position:fixed;inset:0;
+      background:rgba(0,0,0,.55);z-index:2000;
+      align-items:center;justify-content:center;
+      padding:1rem;
+      backdrop-filter:blur(4px);
+      -webkit-backdrop-filter:blur(4px);
+    }
+    .modal-overlay.open { display:flex; }
+
+    .modal {
+      background:var(--white);border-radius:20px;
+      max-width:860px;width:100%;
+      max-height:92vh;overflow-y:auto;
+      -webkit-overflow-scrolling:touch;
+      box-shadow:0 24px 64px rgba(0,0,0,.25);
+      display:grid;grid-template-columns:1fr 1fr;
+      animation:modalIn .28s ease;
+    }
+    @keyframes modalIn {
+      from{opacity:0;transform:scale(.95) translateY(12px)}
+      to  {opacity:1;transform:scale(1) translateY(0)}
+    }
+
+    /* Modal left — image */
+    .modal-img-side {
+      display:flex;flex-direction:column;align-items:stretch;
+      font-size:7rem;border-radius:20px 0 0 20px;
+      min-height:320px;overflow:hidden;
+    }
+    .modal-main-img-wrap {
+      flex:1;width:100%;
+      display:flex;align-items:center;justify-content:center;
+      min-height:260px;overflow:hidden;
+    }
+    .modal-img-side img.modal-photo {
+  display:block;
+  width:100%;height:100%;
+  max-width:100%;max-height:100%;
+  object-fit:contain;padding:20px;
+  pointer-events:none;
+}
+    .modal-emoji { line-height:1; }
+
+    /* Thumbnail strip */
+    .modal-thumbs {
+      width:100%;display:flex;gap:8px;padding:10px 12px;
+      overflow-x:auto;background:rgba(0,0,0,.12);
+      scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.3) transparent;
+      flex-shrink:0;
+    }
+    .modal-thumbs::-webkit-scrollbar { height:4px; }
+    .modal-thumbs::-webkit-scrollbar-thumb { background:rgba(255,255,255,.35);border-radius:4px; }
+    .modal-thumbs:empty { display:none; }
+    .modal-thumb {
+      width:56px;height:56px;border-radius:8px;overflow:hidden;flex-shrink:0;
+      border:2px solid transparent;cursor:pointer;
+      transition:border-color .18s, transform .18s;background:#fff;
+    }
+    .modal-thumb:hover { transform:scale(1.05); }
+    .modal-thumb.active { border-color:#FF6B00;box-shadow:0 0 0 1px #FF6B00; }
+    .modal-thumb img { width:100%;height:100%;object-fit:contain;padding:4px; }
+    .modal-thumb-emoji {
+      width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+      font-size:1.6rem;
+    }
+
+    /* Modal right — content */
+    .modal-body {
+      padding:2.2rem 2rem;display:flex;flex-direction:column;gap:1rem;
+      overflow-y:auto;
+    }
+    .modal-close {
+      position:absolute;top:1rem;right:1rem;
+      width:36px;height:36px;border-radius:50%;
+      background:rgba(0,0,0,.12);border:none;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      font-size:1rem;color:var(--white);transition:var(--transition);
+      z-index:10;-webkit-appearance:none;
+    }
+    .modal-close:hover { background:rgba(0,0,0,.3); }
+    .modal-badge-row { display:flex;gap:.5rem;flex-wrap:wrap; }
+    .modal-badge {
+      font-family:var(--font-head);font-weight:700;font-size:.72rem;
+      padding:4px 12px;border-radius:50px;
+    }
+    .modal-badge.bestseller { background:var(--brown);color:var(--white); }
+    .modal-badge.new        { background:#28a745;color:var(--white); }
+    .modal-badge.limited    { background:#dc3545;color:var(--white); }
+    .modal-badge.sale       { background:var(--orange);color:var(--white); }
+
+    .modal-name {
+      font-family:var(--font-head);font-size:1.5rem;font-weight:800;
+      color:var(--dark);line-height:1.2;
+    }
+    .modal-tagline { font-size:.97rem;color:var(--orange);font-weight:600; }
+    .modal-desc { color:var(--gray);font-size:.93rem;line-height:1.75; }
+
+    /* Features */
+    .modal-features {
+      display:flex;flex-wrap:wrap;gap:.5rem;
+    }
+    .modal-feature-chip {
+      background:rgba(255,107,0,.1);color:var(--brown);
+      font-size:.78rem;font-family:var(--font-head);font-weight:600;
+      padding:5px 12px;border-radius:50px;
+    }
+
+    /* Price row */
+    .modal-price-row {
+      display:flex;align-items:center;gap:1rem;flex-wrap:wrap;
+      padding:.8rem 0;border-top:1px solid #f0e8e0;border-bottom:1px solid #f0e8e0;
+    }
+    .modal-price-main {
+      font-family:var(--font-head);font-size:1.7rem;font-weight:800;color:var(--brown);
+    }
+    .modal-price-sale { color:var(--orange); }
+    .modal-price-old  {
+      font-size:.95rem;color:var(--gray);text-decoration:line-through;font-weight:500;
+    }
+    .modal-weight-tag {
+      background:var(--off-white);padding:5px 14px;border-radius:50px;
+      font-size:.8rem;font-weight:600;color:var(--gray);font-family:var(--font-head);
+    }
+
+    /* Qty selector */
+    .modal-qty-row {
+      display:flex;align-items:center;gap:1rem;flex-wrap:wrap;
+    }
+    .qty-label { font-family:var(--font-head);font-weight:700;font-size:.85rem;color:var(--dark); }
+    .qty-control {
+      display:flex;align-items:center;border:2px solid #e0d4cc;border-radius:50px;overflow:hidden;
+    }
+    .qty-btn {
+      width:36px;height:36px;background:none;border:none;cursor:pointer;
+      font-size:1.1rem;font-weight:700;color:var(--dark);transition:var(--transition);
+      -webkit-appearance:none;display:flex;align-items:center;justify-content:center;
+    }
+    .qty-btn:hover { background:var(--off-white); }
+    .qty-num {
+      min-width:32px;text-align:center;font-family:var(--font-head);
+      font-weight:700;font-size:.95rem;
+    }
+
+    /* Action buttons */
+    .modal-actions { display:flex;gap:.8rem;flex-wrap:wrap; }
+    .modal-actions .btn { flex:1;min-width:130px;justify-content:center; }
+
+    /* Nutrition/info accordion */
+    .modal-accordion { margin-top:.5rem; }
+    .accordion-item { border-top:1px solid #f0e8e0; }
+    .accordion-head {
+      display:flex;align-items:center;justify-content:space-between;
+      padding:.85rem 0;cursor:pointer;
+      font-family:var(--font-head);font-weight:700;font-size:.88rem;color:var(--dark);
+      background:none;border:none;width:100%;text-align:left;-webkit-appearance:none;
+    }
+    .accordion-head i { transition:transform var(--transition);color:var(--orange); }
+    .accordion-head.open i { transform:rotate(180deg); }
+    .accordion-body {
+      display:none;padding:.5rem 0 1rem;color:var(--gray);font-size:.88rem;line-height:1.7;
+    }
+    .accordion-body.open { display:block; }
+
+    /* ======================================================
+       RESPONSIVE
+    ====================================================== */
+    @media(max-width:1024px){ .shop-grid{grid-template-columns:repeat(3,1fr);} }
+    @media(max-width:768px){
+      .shop-grid{grid-template-columns:repeat(2,1fr);gap:1rem;}
+      .modal{grid-template-columns:1fr;max-height:95vh;}
+      .modal-img-side{min-height:auto;border-radius:20px 20px 0 0;}
+      .modal-main-img-wrap{min-height:200px;}
+      .modal-body{padding:1.5rem 1.2rem;}
+      .modal-name{font-size:1.25rem;}
+    }
+    @media(max-width:480px){
+      .shop-grid{grid-template-columns:1fr;}
+      .filter-count{display:none;}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Campaign Banner -->
+  <div id="campaign-banner" role="alert" aria-live="polite"></div>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo" aria-label="Bunofeed Home">
+        <img src="https://i.ibb.co/5W7myd6t/Brand-logo-2.png" alt="Bunofeed Logo" class="logo-img"/>
+      </a>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+        <a href="index.html"       class="nav-link">Home</a>
+        <a href="orders.html" class="nav-link">My Orders</a>
+        <a href="shop.html"        class="nav-link active">Products</a>
+        <a href="index.html#about" class="nav-link">About</a>
+        <a href="index.html#contact" class="nav-link">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- PAGE HERO -->
+  <section class="shop-hero">
+    <div class="shop-hero-inner">
+      <p class="section-tag">Our Products</p>
+      <h1>Clean Food, Real Ingredients</h1>
+      <p>Every product crafted with purpose — no fillers, no shortcuts.</p>
+    </div>
+  </section>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar" role="navigation" aria-label="Product filters">
+    <div class="filter-inner">
+      <button class="filter-btn active" data-filter="all">All Products</button>
+      <button class="filter-btn" data-filter="peanut-butter">Peanut Butters</button>
+      <button class="filter-btn" data-filter="oats">Oats</button>
+      <button class="filter-btn" data-filter="muesli">Muesli</button>
+      <span class="filter-count" id="filter-count"></span>
+    </div>
+  </div>
+
+  <!-- PRODUCTS GRID -->
+  <section class="shop-section">
+    <div class="shop-grid" id="shop-grid"></div>
+  </section>
+
+  <!-- ======================================================
+       PRODUCT DETAIL MODAL
+  ====================================================== -->
+  <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-product-name">
+    <div class="modal" id="modal-box">
+      <button class="modal-close" id="modal-close" aria-label="Close">
+        <i class="fas fa-times"></i>
+      </button>
+
+      <!-- Left: image -->
+      <div class="modal-img-side peanut-bg" id="modal-img-side">
+        <div class="modal-main-img-wrap" id="modal-main-img-wrap">
+          <span class="modal-emoji" id="modal-emoji">🥜</span>
+        </div>
+        <div class="modal-thumbs" id="modal-thumbs"></div>
+      </div>
+
+      <!-- Right: info -->
+      <div class="modal-body">
+        <div class="modal-badge-row" id="modal-badges"></div>
+        <h2 class="modal-name" id="modal-product-name">Product Name</h2>
+        <p  class="modal-tagline" id="modal-tagline"></p>
+        <p  class="modal-desc"    id="modal-desc"></p>
+
+        <div class="modal-features" id="modal-features"></div>
+
+        <div class="modal-price-row">
+          <span class="modal-price-main" id="modal-price"></span>
+          <span class="modal-price-old"  id="modal-price-old" style="display:none"></span>
+          <span class="modal-weight-tag" id="modal-weight"></span>
+        </div>
+
+        <div class="modal-qty-row">
+          <span class="qty-label">Quantity:</span>
+          <div class="qty-control">
+            <button class="qty-btn" id="qty-minus" aria-label="Decrease quantity">−</button>
+            <span   class="qty-num"  id="qty-num">1</span>
+            <button class="qty-btn" id="qty-plus"  aria-label="Increase quantity">+</button>
+          </div>
+          <span style="font-size:.85rem;color:var(--gray)" id="modal-subtotal"></span>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-primary" id="modal-buy-btn">
+            <i class="fas fa-bolt"></i> Buy Now
+          </button>
+          <a href="shop.html" class="btn btn-brown">
+            <i class="fas fa-arrow-left"></i> Back to Shop
+          </a>
+        </div>
+
+        <!-- Accordion -->
+        <div class="modal-accordion" id="modal-accordion"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHECKOUT MODAL -->
+  <div class="checkout-modal-overlay" id="checkout-modal-overlay">
+    <div class="checkout-modal">
+      <button class="checkout-close" id="checkout-close-btn"><i class="fas fa-times"></i></button>
+      <h2>Secure Checkout</h2>
+      <form class="checkout-form" id="checkout-form">
+        <div class="form-group">
+          <label>Full Name <span>*</span></label>
+          <input type="text" id="cust-name" class="form-input" placeholder="Your full name" required>
+          <div class="error-msg" id="name-error">Please enter your full name</div>
+        </div>
+        <div class="form-group">
+          <label>Mobile Number <span>*</span></label>
+          <input type="tel" id="cust-phone" class="form-input" placeholder="10-digit mobile number" required maxlength="10">
+          <div class="error-msg" id="phone-error">Please enter a valid 10-digit mobile number</div>
+        </div>
+        <div class="form-group">
+          <label>Email ID <span>*</span></label>
+          <input type="email" id="cust-email" class="form-input" placeholder="Email address" required>
+          <div class="error-msg" id="email-error">Please enter a valid email address</div>
+        </div>
+        <div class="form-group">
+          <label>Full Address <span>*</span></label>
+          <input type="text" id="cust-address" class="form-input" placeholder="House no, Street, Landmark" required>
+          <div class="error-msg" id="address-error">Please enter your delivery address</div>
+        </div>
+        <div class="form-group">
+          <label>Pincode <span>*</span></label>
+          <input type="text" id="cust-pincode" class="form-input" placeholder="6-digit pincode" required maxlength="6">
+          <div class="error-msg" id="pincode-error">Please enter a valid 6-digit pincode</div>
+        </div>
+        <button type="submit" class="btn btn-primary checkout-btn" id="proceed-pay-btn">
+          Proceed to Pay
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer" id="contact">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="https://i.ibb.co/5W7myd6t/Brand-logo-2.png" alt="Bunofeed Logo" class="logo-img footer-logo-img"/>
+        <p>Your companion in healthy living. Honest food for real people.</p>
+        <div class="social-links">
+          <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.facebook.com"  target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+          <a href="https://www.youtube.com"   target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+          <a href="https://www.x.com"         target="_blank" rel="noopener noreferrer" aria-label="X"><i class="fab fa-x-twitter"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="index.html">Home</a>
+        <a href="shop.html">Products</a>
+        <a href="index.html#about">About</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="terms.html">Terms of Service</a>
+        <a href="privacy.html">Privacy Policy</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact Us</h4>
+        <p><i class="fas fa-envelope"></i> bunofeedhelpdesk@gmail.com</p>
+        <p><i class="fas fa-map-marker-alt"></i> Bareilly, UP, India</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Bunofeed. All rights reserved. |
+        <a href="terms.html">Terms of Service</a> |
+        <a href="privacy.html">Privacy Policy</a>
+      </p>
+      <span class="footer-highlight">Made with ❤️ for healthy 💪 living.</span>
+    </div>
+  </footer>
+
+  <!-- Razorpay SDK -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <!-- Data -->
+  <script src="products.js"></script>
+  <script>
+  /* ==============================================================
+     SHOP PAGE SCRIPT
+  ============================================================== */
+  document.addEventListener('DOMContentLoaded', () => {
+    const D = window.BUNOFEED_DATA;
+    if (!D) return;
+
+    /* ---- helpers ---- */
+    const saleActive = D.sale && D.sale.active &&
+      (!D.sale.endDate || new Date() <= new Date(D.sale.endDate));
+    const discountPct = saleActive ? (D.sale.discountPercent || 0) : 0;
+
+    function salePrice(p) {
+      return saleActive && discountPct > 0
+        ? Math.round(p * (1 - discountPct / 100)) : null;
+    }
+
+    /* ---- Campaign Banner ---- */
+    const banner = document.getElementById('campaign-banner');
+    if (banner && D.campaign && D.campaign.active) {
+      const expired = D.campaign.expiryDate && new Date() > new Date(D.campaign.expiryDate);
+      if (!expired) {
+        banner.style.cssText = `display:block;background:${D.campaign.bgColor||'#FF6B00'};color:${D.campaign.textColor||'#fff'};padding:10px 3rem 10px 1.5rem;text-align:center;font-family:'Montserrat',sans-serif;font-weight:600;font-size:.88rem;position:relative;`;
+        banner.innerHTML = `<span>${D.campaign.text}</span>${D.campaign.link?`<a href="${D.campaign.link}" style="color:inherit;text-decoration:underline;margin-left:.5rem">${D.campaign.linkText||''}</a>`:''}<button onclick="this.parentElement.style.display='none'" style="position:absolute;right:1rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.1rem;color:inherit;padding:4px" aria-label="Close">✕</button>`;
+      }
+    }
+
+    /* ---- Mobile nav ---- */
+    const hamburger = document.getElementById('hamburger');
+    const navLinks  = document.getElementById('navLinks');
+    hamburger.addEventListener('click', () => {
+      const open = navLinks.classList.toggle('open');
+      hamburger.classList.toggle('active', open);
+      document.body.style.overflow = open ? 'hidden' : '';
+    });
+
+    /* ---- State ---- */
+    let currentFilter = 'all';
+    let products = (D.products || []).filter(p => p.visible !== false);
+    let currentProduct = null;
+    let qty = 1;
+    let isProcessing = false;
+
+    // GOOGLE SHEET WEB APP URL - Replace this with your actual Web App URL after deploying from Google Apps Script
+    const GOOGLE_SHEET_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz1Em5ptLleI5blE5l3kbopB80vhekzif3855zHvMOLiTfmNGA51gOegh52tZE7_C1QBg/exec';
+
+    function generateOrderId() {
+      return 'ORD' + Date.now() + Math.floor(Math.random() * 1000);
+    }
+
+    async function syncToGoogleSheets(orderData) {
+      if (!GOOGLE_SHEET_WEB_APP_URL || GOOGLE_SHEET_WEB_APP_URL.includes('YOUR_GOOGLE_APPS_SCRIPT')) {
+        console.warn('Google Sheets Web App URL not configured.');
+        return;
+      }
+      try {
+        await fetch(GOOGLE_SHEET_WEB_APP_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderData)
+        });
+      } catch (e) {
+        console.error('Error syncing to Google Sheets:', e);
+      }
+    }
+
+    const checkoutOverlay = document.getElementById('checkout-modal-overlay');
+    const checkoutForm    = document.getElementById('checkout-form');
+    const checkoutClose   = document.getElementById('checkout-close-btn');
+
+    function openCheckoutModal() {
+      if (!currentProduct) return;
+      checkoutOverlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeCheckoutModal() {
+      checkoutOverlay.classList.remove('open');
+      if (!document.getElementById('modal-overlay').classList.contains('open')) {
+        document.body.style.overflow = '';
+      }
+    }
+
+    if (checkoutClose) checkoutClose.addEventListener('click', closeCheckoutModal);
+
+    if (checkoutForm) {
+      checkoutForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (isProcessing) return;
+
+        const name     = document.getElementById('cust-name').value.trim();
+        const phone    = document.getElementById('cust-phone').value.trim();
+        const email    = document.getElementById('cust-email').value.trim();
+        const address  = document.getElementById('cust-address').value.trim();
+        const pincode  = document.getElementById('cust-pincode').value.trim();
+
+        // Reset errors
+        document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
+
+        // Validation
+        let isValid = true;
+        if (!name) { document.getElementById('name-error').style.display = 'block'; isValid = false; }
+        if (!/^\d{10}$/.test(phone)) { document.getElementById('phone-error').style.display = 'block'; isValid = false; }
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { document.getElementById('email-error').style.display = 'block'; isValid = false; }
+        if (!address) { document.getElementById('address-error').style.display = 'block'; isValid = false; }
+        if (!/^\d{6}$/.test(pincode)) { document.getElementById('pincode-error').style.display = 'block'; isValid = false; }
+
+        // Serviceable pincode check
+        const serviceablePincodes = D.serviceablePincodes || [];
+        if (isValid && serviceablePincodes.length > 0 && !serviceablePincodes.includes(pincode)) {
+          const el = document.getElementById('pincode-error');
+          el.textContent = 'Sorry, we do not deliver to this pincode yet.';
+          el.style.display = 'block';
+          isValid = false;
+        }
+
+        if (!isValid) return;
+
+        isProcessing = true;
+        const proceedBtn = document.getElementById('proceed-pay-btn');
+        proceedBtn.disabled = true;
+        proceedBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+        const sp = salePrice(currentProduct.price);
+        const unitPrice = sp || currentProduct.price;
+        const totalAmount = unitPrice * qty;
+        const shipping = D.shipping && totalAmount < D.shipping.freeShippingAbove ? D.shipping.shippingCharge : 0;
+        const grandTotal = totalAmount + shipping;
+        const orderId = generateOrderId();
+
+        const orderData = {
+          order_id: orderId,
+          date_time: new Date().toLocaleString('en-IN'),
+          customer_name: name,
+          phone_number: phone,
+          email: email,
+          address: address,
+          pincode: pincode,
+          product_id: currentProduct.id,
+          product_name: currentProduct.name,
+          quantity: qty,
+          product_price: unitPrice,
+          total_amount: grandTotal,
+          payment_id: '',
+          razorpay_order_id: '',
+          payment_status: 'Pending'
+        };
+
+        // Save customer data even before payment (Step 4 Requirement)
+        await syncToGoogleSheets(orderData);
+
+        // Open Razorpay
+        triggerRazorpay(currentProduct, qty, grandTotal, shipping, orderData);
+      });
+    }
+
+    function resetSubmitBtn() {
+      isProcessing = false;
+      const proceedBtn = document.getElementById('proceed-pay-btn');
+      if (proceedBtn) {
+        proceedBtn.disabled = false;
+        proceedBtn.textContent = 'Proceed to Pay';
+      }
+    }
+
+    /* ---- Build product card ---- */
+    function buildCard(product) {
+      const sp = salePrice(product.price);
+      let badgeHTML = product.badge
+        ? `<div class="product-badge${product.badgeType==='new'?' new':product.badgeType==='limited'?' limited':''}">${product.badge}</div>` : '';
+      if (saleActive) badgeHTML += `<div class="sale-ribbon">${D.sale.label||'SALE'} ${discountPct}% OFF</div>`;
+
+      const imgHTML = product.image
+        ? `<img class="product-photo" src="${product.image}" alt="${product.name}" loading="lazy"/>`
+        : `<span class="product-emoji">${product.emoji||'🥜'}</span>`;
+
+      const priceHTML = sp
+        ? `<div class="product-price">
+            <div class="product-weight">${product.weight||''}</div>
+            <div class="price-sale">
+              <span class="price-current">₹${sp}</span>
+              <span class="price-old">₹${product.price}</span>
+            </div>
+          </div>`
+        : `<div class="product-price">
+            <div class="product-weight">${product.weight||''}</div>
+            <div class="price-original">₹${product.price}</div>
+          </div>`;
+
+      const card = document.createElement('div');
+      card.className = 'product-card reveal';
+      card.dataset.id = product.id;
+      card.dataset.category = product.category || '';
+      card.innerHTML = `
+        ${badgeHTML}
+        <div class="product-img ${product.bgClass||''}">${imgHTML}</div>
+        <div class="product-info">
+          <h3>${product.name}</h3>
+          <p>${product.description}</p>
+          <div class="product-footer">
+            ${priceHTML}
+            <div class="product-card-btns">
+              <button class="btn-view-detail view-detail-btn" data-id="${product.id}">View Details</button>
+              <button class="btn-buy buy-now-card-btn" data-id="${product.id}">Buy Now</button>
+            </div>
+          </div>
+        </div>`;
+      return card;
+    }
+
+    /* ---- Render grid ---- */
+    function renderGrid(filter) {
+      const grid = document.getElementById('shop-grid');
+      const countEl = document.getElementById('filter-count');
+      grid.innerHTML = '';
+      const filtered = products.filter(p => filter === 'all' || p.category === filter);
+      countEl.textContent = `${filtered.length} product${filtered.length!==1?'s':''}`;
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="empty-state"><i class="fas fa-box-open"></i><p>No products in this category yet.</p></div>`;
+        return;
+      }
+      filtered.forEach(p => {
+        const card = buildCard(p);
+        grid.appendChild(card);
+      });
+      // Scroll reveal
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); }});
+      }, { threshold: 0.1 });
+      grid.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+      // Wire detail buttons
+      grid.querySelectorAll('.view-detail-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => { e.stopPropagation(); openModal(btn.dataset.id); });
+      });
+      // Wire buy-now buttons on cards
+      grid.querySelectorAll('.buy-now-card-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const product = products.find(p => p.id === btn.dataset.id);
+          if (product) {
+            currentProduct = product;
+            qty = 1;
+            openCheckoutModal();
+          }
+        });
+      });
+      // Whole card also opens modal
+      grid.querySelectorAll('.product-card').forEach(card => {
+        card.style.cursor = 'pointer';
+        card.addEventListener('click', (e) => {
+          if (!e.target.closest('.btn-buy') && !e.target.closest('.btn-view-detail')) openModal(card.dataset.id);
+        });
+      });
+    }
+
+    /* ---- Filters ---- */
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        renderGrid(currentFilter);
+      });
+    });
+
+    renderGrid('all');
+
+    /* ---- Modal ---- */
+    const overlay   = document.getElementById('modal-overlay');
+    const closeBtn  = document.getElementById('modal-close');
+    const qtyMinus  = document.getElementById('qty-minus');
+    const qtyPlus   = document.getElementById('qty-plus');
+    const qtyNum    = document.getElementById('qty-num');
+    const subtotal  = document.getElementById('modal-subtotal');
+    const buyBtn    = document.getElementById('modal-buy-btn');
+
+    function openModal(id, focusBuy) {
+      const product = products.find(p => p.id === id);
+      if (!product) return;
+      currentProduct = product;
+      qty = 1;
+
+      const sp = salePrice(product.price);
+      const displayPrice = sp || product.price;
+
+      // Image side — gallery support
+      const imgSide = document.getElementById('modal-img-side');
+      const mainWrap = document.getElementById('modal-main-img-wrap');
+      const thumbsEl = document.getElementById('modal-thumbs');
+      imgSide.className = `modal-img-side ${product.bgClass||'peanut-bg'}`;
+
+      // Build images array: prefer product.images[], fallback to product.image, fallback to emoji
+      const allImages = (product.images && product.images.filter(u => u && u.trim()))
+        || (product.image ? [product.image] : []);
+
+      function setMainImage(src) {
+        mainWrap.innerHTML = src
+          ? `<img class="modal-photo" src="${src}" alt="${product.name}"/>`
+          : `<span class="modal-emoji" id="modal-emoji">${product.emoji||'🥜'}</span>`;
+      }
+
+      function buildThumbs(images, activeIdx) {
+        thumbsEl.innerHTML = '';
+        if (images.length <= 1) return; // single image — no strip needed
+        images.forEach((src, i) => {
+          const t = document.createElement('div');
+          t.className = 'modal-thumb' + (i === activeIdx ? ' active' : '');
+          t.innerHTML = `<img src="${src}" alt="Product image ${i+1}" loading="lazy"/>`;
+          t.addEventListener('click', () => {
+            setMainImage(src);
+            thumbsEl.querySelectorAll('.modal-thumb').forEach(el => el.classList.remove('active'));
+            t.classList.add('active');
+          });
+          thumbsEl.appendChild(t);
+        });
+      }
+
+      setMainImage(allImages[0] || null);
+      buildThumbs(allImages, 0);
+
+      // Badges
+      let badgesHTML = '';
+      if (product.badge) {
+        badgesHTML += `<span class="modal-badge ${product.badgeType||''}">${product.badge}</span>`;
+      }
+      if (saleActive) badgesHTML += `<span class="modal-badge sale">${D.sale.label||'SALE'} ${discountPct}% OFF</span>`;
+      document.getElementById('modal-badges').innerHTML = badgesHTML;
+
+      document.getElementById('modal-product-name').textContent = product.name;
+      document.getElementById('modal-tagline').textContent       = product.tagline || '';
+      document.getElementById('modal-desc').textContent          = product.description;
+      document.getElementById('modal-weight').textContent        = product.weight || '';
+
+      // Features
+      document.getElementById('modal-features').innerHTML =
+        (product.features||[]).map(f=>`<span class="modal-feature-chip">${f}</span>`).join('');
+
+      // Price
+      const priceEl    = document.getElementById('modal-price');
+      const priceOldEl = document.getElementById('modal-price-old');
+      if (sp) {
+        priceEl.textContent = `₹${sp}`;
+        priceEl.classList.add('modal-price-sale');
+        priceOldEl.textContent = `₹${product.price}`;
+        priceOldEl.style.display = 'inline';
+      } else {
+        priceEl.textContent = `₹${product.price}`;
+        priceEl.classList.remove('modal-price-sale');
+        priceOldEl.style.display = 'none';
+      }
+
+      // Qty & subtotal
+      qtyNum.textContent     = qty;
+      subtotal.textContent   = `Total: ₹${displayPrice * qty}`;
+
+      // Accordion — synced with admin panel fields
+      const accordionData = [
+        { title: 'Ingredients',   body: product.ingredients  || product.description || 'See product label for full ingredient list.' },
+        { title: 'Key Benefits',  body: product.keyBenefits  || (product.features||[]).join(' • ') || 'See product label for full details.' },
+        { title: 'Storage Info',  body: product.storageInfo  || 'Store in a cool, dry place. Keep lid tightly closed after opening. Consume within 3 months of opening.' },
+        { title: 'Allergen Info', body: product.allergenInfo || 'May contain traces of nuts and soy. Always read the full label before consumption if you have allergies.' },
+      ];
+      document.getElementById('modal-accordion').innerHTML = accordionData.map((a, i) => `
+        <div class="accordion-item">
+          <button class="accordion-head" data-acc="${i}">
+            ${a.title} <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="accordion-body" data-acc-body="${i}" style="white-space:pre-line">${a.body}</div>
+        </div>`).join('');
+
+      document.querySelectorAll('.accordion-head').forEach(head => {
+        head.addEventListener('click', () => {
+          const idx = head.dataset.acc;
+          const body = document.querySelector(`.accordion-body[data-acc-body="${idx}"]`);
+          const isOpen = head.classList.toggle('open');
+          body.classList.toggle('open', isOpen);
+        });
+      });
+
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+
+      if (focusBuy) {
+        setTimeout(() => buyBtn.focus(), 100);
+      }
+    }
+
+    /* Qty controls */
+    qtyMinus.addEventListener('click', () => {
+      if (qty > 1) {
+        qty--;
+        qtyNum.textContent = qty;
+        updateSubtotal();
+      }
+    });
+    qtyPlus.addEventListener('click', () => {
+      qty++;
+      qtyNum.textContent = qty;
+      updateSubtotal();
+    });
+    function updateSubtotal() {
+      if (!currentProduct) return;
+      const sp = salePrice(currentProduct.price);
+      const price = sp || currentProduct.price;
+      subtotal.textContent = `Total: ₹${price * qty}`;
+    }
+
+    /* Close modal */
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+    function closeModal() {
+      overlay.classList.remove('open');
+      document.body.style.overflow = '';
+      currentProduct = null;
+    }
+
+    /* Buy Now — Flow */
+    buyBtn.addEventListener('click', () => {
+      if (!currentProduct) return;
+      openCheckoutModal();
+    });
+
+    /* ---- Razorpay ---- */
+    function triggerRazorpay(product, quantity, grandTotal, shippingAmt, orderData) {
+      const key = D.payment && D.payment.razorpayKeyId;
+      if (!key || key.includes('PASTE_YOUR')) {
+        alert('⚠️ Razorpay key not configured yet.\n\nOpen products.js and paste your Razorpay Key ID in payment.razorpayKeyId.');
+        resetSubmitBtn();
+        return;
+      }
+      if (typeof Razorpay === 'undefined') {
+        alert('Payment gateway not loaded. Please check your internet connection.');
+        resetSubmitBtn();
+        return;
+      }
+      const options = {
+        key: key,
+        amount: grandTotal * 100,       // Razorpay expects paise
+        currency: D.payment.currency || 'INR',
+        name: D.payment.businessName || 'Bunofeed',
+        description: `${product.name} × ${quantity}${shippingAmt > 0 ? ` + ₹${shippingAmt} shipping` : ' (Free Shipping)'}`,
+        image: D.payment.logoUrl || '',
+        theme: { color: D.payment.themeColor || '#FF6B00' },
+        prefill: {
+          name: orderData.customer_name,
+          email: orderData.email,
+          contact: orderData.phone_number
+        },
+        notes: {
+          order_id: orderData.order_id,
+          product_id: product.id,
+        },
+        handler: async function(response) {
+          orderData.payment_id = response.razorpay_payment_id;
+          orderData.payment_status = 'Paid';
+          await syncToGoogleSheets(orderData);
+          window.location.href = `order-success.html?payment_id=${response.razorpay_payment_id}&product=${encodeURIComponent(product.name)}&qty=${quantity}&total=${grandTotal}`;
+        },
+        modal: {
+          ondismiss: function() {
+            resetSubmitBtn();
+          }
+        }
+      };
+      const rzp = new Razorpay(options);
+      rzp.on('payment.failed', async function(response) {
+        orderData.payment_id = response.error.metadata.payment_id || 'Failed';
+        orderData.payment_status = 'Failed';
+        await syncToGoogleSheets(orderData);
+        alert(`Payment failed: ${response.error.description}`);
+        resetSubmitBtn();
+      });
+      rzp.open();
+    }
+
+  }); // DOMContentLoaded
+  </script>
+</body>
+</html>

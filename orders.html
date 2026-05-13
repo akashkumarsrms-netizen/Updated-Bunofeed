@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>Your Orders – Bunofeed</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+
+    /* ── Page wrapper ── */
+    .orders-page {
+      min-height: 80vh;
+      background: var(--off-white);
+      padding: 3rem 1.5rem 5rem;
+    }
+    .orders-inner {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    /* ── Page header ── */
+    .page-heading {
+      text-align: center;
+      margin-bottom: 2.2rem;
+    }
+    .page-heading h1 {
+      font-family: var(--font-head);
+      font-size: clamp(1.7rem, 4vw, 2.2rem);
+      font-weight: 800;
+      color: var(--dark);
+    }
+    .page-heading h1 span { color: var(--orange); }
+    .page-heading p {
+      color: var(--gray);
+      font-size: .95rem;
+      margin-top: .4rem;
+    }
+
+    /* ── Search box ── */
+    .order-search-card {
+      background: var(--white);
+      border-radius: 18px;
+      padding: 2rem 2rem 1.8rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 2rem;
+    }
+    .order-search-card label {
+      display: block;
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: .82rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--dark);
+      margin-bottom: .5rem;
+    }
+    .search-row {
+      display: flex;
+      gap: .8rem;
+    }
+    .search-row .form-input {
+      flex: 1;
+      padding: 13px 16px;
+      border: 2px solid #e0d4cc;
+      border-radius: 12px;
+      font-family: var(--font-body);
+      font-size: .97rem;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .search-row .form-input:focus { border-color: var(--orange); }
+    .search-row .btn { white-space: nowrap; padding: 13px 24px; }
+    .search-hint {
+      font-size: .78rem;
+      color: var(--gray);
+      margin-top: .5rem;
+    }
+
+    /* ── Loading / error / empty ── */
+    .state-box {
+      text-align: center;
+      padding: 2.5rem 1rem;
+      color: var(--gray);
+      font-size: .97rem;
+      display: none;
+    }
+    .state-box i { font-size: 2rem; margin-bottom: .8rem; display: block; }
+    .state-box.error i { color: #dc3545; }
+    .state-box.loading i { color: var(--orange); animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Order result card ── */
+    .order-result-card {
+      background: var(--white);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: none;
+    }
+    .order-result-card .status-bar { height: 6px; background: var(--orange); }
+    .order-result-card .card-body  { padding: 1.8rem 2rem 2rem; }
+
+    /* ── Status badge ── */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      padding: 5px 14px;
+      border-radius: 50px;
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: .78rem;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .badge-pending   { background: #fff3cd; color: #856404; }
+    .badge-confirmed { background: #cfe2ff; color: #084298; }
+    .badge-shipped   { background: #e0cffc; color: #5b007e; }
+    .badge-delivered { background: #d1e7dd; color: #0a3622; }
+    .badge-cancelled { background: #f8d7da; color: #842029; }
+    .badge-return    { background: #fde8d0; color: #7a3200; }
+    .badge-refund    { background: #d2f4ea; color: #0b5540; }
+    .badge-default   { background: #e9ecef; color: #495057; }
+
+    /* ── Order info rows ── */
+    .order-header-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: .8rem;
+      margin-bottom: 1.4rem;
+    }
+    .order-id-block .order-id   { font-family: var(--font-head); font-weight: 800; font-size: 1.15rem; color: var(--dark); }
+    .order-id-block .order-date { font-size: .82rem; color: var(--gray); margin-top: .2rem; }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .5rem 1.5rem;
+      margin-bottom: 1.4rem;
+    }
+    .info-row {
+      padding: .55rem 0;
+      border-bottom: 1px solid #f0e8e0;
+      display: flex; flex-direction: column; gap: .15rem;
+    }
+    .info-row:nth-last-child(-n+2) { border-bottom: none; }
+    .info-row.full { grid-column: 1 / -1; }
+    .info-label { font-size: .75rem; font-family: var(--font-head); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--gray); }
+    .info-value { font-size: .93rem; font-weight: 600; color: var(--dark); }
+
+    /* ── Status section ── */
+    .status-section {
+      background: var(--off-white);
+      border-radius: 12px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 1.5rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: .7rem;
+    }
+    .status-item { display: flex; flex-direction: column; gap: .25rem; }
+    .status-item .s-label { font-size: .72rem; font-family: var(--font-head); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--gray); }
+
+    /* ── Action buttons ── */
+    .action-row {
+      display: flex; gap: .8rem; flex-wrap: wrap;
+      padding-top: 1.2rem; border-top: 1px solid #f0e8e0;
+    }
+    .action-row .btn { flex: 1; min-width: 160px; font-size: .9rem; padding: 12px 18px; }
+    .btn-danger { background: #dc3545; color: #fff; border-color: #dc3545; }
+    .btn-danger:hover:not(:disabled) { background: #b02a37; border-color: #b02a37; transform: translateY(-2px); }
+    .btn-warning-custom { background: #fd7e14; color: #fff; border-color: #fd7e14; }
+    .btn-warning-custom:hover:not(:disabled) { background: #e8620a; border-color: #e8620a; transform: translateY(-2px); }
+    .btn:disabled { opacity: .45; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+
+    /* ── Modals ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.6); z-index: 4000;
+      align-items: center; justify-content: center;
+      padding: 1rem; backdrop-filter: blur(5px);
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #fff; border-radius: 20px;
+      width: 100%; max-width: 500px; max-height: 90vh;
+      overflow-y: auto; padding: 2rem;
+      box-shadow: 0 24px 64px rgba(0,0,0,.28);
+      position: relative; animation: modalIn .3s ease;
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(30px) scale(.97); }
+      to   { opacity: 1; transform: translateY(0)   scale(1);   }
+    }
+    .modal-close {
+      position: absolute; top: 1rem; right: 1rem;
+      background: none; border: none; font-size: 1.2rem; color: var(--gray);
+      cursor: pointer; width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%; transition: background .2s, color .2s;
+    }
+    .modal-close:hover { background: #f0e8e0; color: var(--dark); }
+    .modal-icon {
+      width: 64px; height: 64px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; color: #fff; margin: 0 auto 1.2rem;
+    }
+    .modal-icon.return-icon { background: linear-gradient(135deg,#fd7e14,#ff6b00); }
+    .modal-icon.cancel-icon { background: linear-gradient(135deg,#dc3545,#b02a37); }
+    .modal-box h2 { font-family: var(--font-head); font-weight: 800; font-size: 1.35rem; text-align: center; color: var(--dark); margin-bottom: .35rem; }
+    .modal-box .modal-sub { text-align: center; font-size: .88rem; color: var(--gray); margin-bottom: 1.5rem; line-height: 1.6; }
+    .modal-form { display: flex; flex-direction: column; gap: 1.1rem; }
+    .modal-form .form-group { display: flex; flex-direction: column; gap: .35rem; }
+    .modal-form label { font-family: var(--font-head); font-weight: 700; font-size: .78rem; text-transform: uppercase; letter-spacing: .05em; color: var(--dark); }
+    .modal-form label span { color: var(--orange); }
+    .modal-form .form-input,
+    .modal-form textarea,
+    .modal-form select {
+      padding: 11px 14px; border: 2px solid #e0d4cc; border-radius: 10px;
+      font-family: var(--font-body); font-size: .92rem; outline: none;
+      transition: border-color .2s; width: 100%; background: #fff;
+    }
+    .modal-form .form-input:focus,
+    .modal-form textarea:focus,
+    .modal-form select:focus { border-color: var(--orange); }
+    .modal-form textarea { resize: vertical; min-height: 90px; }
+
+    /* file upload */
+    .file-upload-box {
+      border: 2px dashed #e0d4cc; border-radius: 10px;
+      padding: 1.2rem; text-align: center; cursor: pointer;
+      transition: border-color .2s, background .2s; position: relative;
+    }
+    .file-upload-box:hover { border-color: var(--orange); background: #fff8f3; }
+    .file-upload-box input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .file-upload-box i { font-size: 1.5rem; color: var(--orange); margin-bottom: .4rem; }
+    .file-upload-box p { font-size: .83rem; color: var(--gray); margin: 0; }
+    .file-upload-box .file-names { font-size: .8rem; color: var(--dark); margin-top: .4rem; font-weight: 600; }
+
+    .modal-submit-btn { width: 100%; margin-top: .4rem; }
+    .btn-spinner { display: none; }
+    .btn.loading .btn-text    { display: none; }
+    .btn.loading .btn-spinner { display: inline-block; }
+
+    .modal-success { text-align: center; padding: 1.5rem 0 .5rem; display: none; }
+    .modal-success i { font-size: 2.5rem; color: #28a745; margin-bottom: .8rem; }
+    .modal-success h3 { font-family: var(--font-head); font-weight: 800; font-size: 1.2rem; color: var(--dark); margin-bottom: .4rem; }
+    .modal-success p  { color: var(--gray); font-size: .9rem; }
+
+    /* ── Responsive ── */
+    @media(max-width:560px){
+      .info-grid { grid-template-columns: 1fr; }
+      .info-row:nth-last-child(-n+2) { border-bottom: 1px solid #f0e8e0; }
+      .info-row:last-child { border-bottom: none; }
+      .action-row .btn { flex: 1 1 100%; }
+      .search-row { flex-direction: column; }
+      .modal-box { padding: 1.5rem 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════ NAVBAR ═══════════ -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo" aria-label="Bunofeed Home">
+        <img src="https://i.ibb.co/5W7myd6t/Brand-logo-2.png" alt="Bunofeed Logo" class="logo-img"/>
+      </a>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+        <a href="index.html"      class="nav-link">Home</a>
+        <a href="shop.html"       class="nav-link">Products</a>
+        <a href="orders.html"     class="nav-link active">My Orders</a>
+        <a href="index.html#contact" class="nav-link">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ═══════════ PAGE ═══════════ -->
+  <div class="orders-page">
+    <div class="orders-inner">
+
+      <div class="page-heading">
+        <div class="section-tag">Order Tracking</div>
+        <h1>Track Your <span>Order</span></h1>
+        <p>Enter your Order ID to see the latest status and manage your order.</p>
+      </div>
+
+      <!-- Search -->
+      <div class="order-search-card">
+        <label for="order-id-input">Your Order ID</label>
+        <div class="search-row" style="flex-direction:column;">
+  
+  <input type="text" id="order-id-input" class="form-input"
+    placeholder="Enter Order ID"
+    autocomplete="off"
+    spellcheck="false"/>
+
+  <input type="tel" id="phone-input" class="form-input"
+    placeholder="Enter Phone Number"
+    autocomplete="off"
+    spellcheck="false"/>
+
+  <button class="btn btn-primary" id="track-btn" onclick="trackOrder()">
+    <i class="fas fa-search"></i> Track
+  </button>
+
+</div>
+          
+        </div>
+        <p class="search-hint">Your Order ID was sent to your email after placing the order.</p>
+      </div>
+
+      <!-- Loading -->
+      <div class="state-box loading" id="state-loading">
+        <i class="fas fa-circle-notch"></i>
+        Fetching your order details…
+      </div>
+
+      <!-- Error -->
+      <div class="state-box error" id="state-error">
+        <i class="fas fa-exclamation-circle"></i>
+        <span id="error-text">Order not found. Please check your Order ID and try again.</span>
+      </div>
+
+      <!-- Result Card -->
+      <div class="order-result-card" id="order-result-card">
+        <div class="status-bar" id="result-status-bar"></div>
+        <div class="card-body">
+
+          <div class="order-header-row">
+            <div class="order-id-block">
+              <div class="order-id"   id="r-order-id">—</div>
+              <div class="order-date" id="r-date">—</div>
+            </div>
+            <span class="status-badge" id="r-order-status-badge">—</span>
+          </div>
+
+          <div class="info-grid">
+            <div class="info-row">
+              <span class="info-label">Customer</span>
+              <span class="info-value" id="r-name">—</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Phone</span>
+              <span class="info-value" id="r-phone">—</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Product</span>
+              <span class="info-value" id="r-product">—</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Quantity</span>
+              <span class="info-value" id="r-qty">—</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Unit Price</span>
+              <span class="info-value" id="r-price">—</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Total Paid</span>
+              <span class="info-value" id="r-total">—</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Payment ID</span>
+              <span class="info-value" id="r-payment-id" style="font-size:.82rem;word-break:break-all;">—</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Payment Status</span>
+              <span class="info-value" id="r-payment-status">—</span>
+            </div>
+            <div class="info-row full">
+              <span class="info-label">Delivery Address</span>
+              <span class="info-value" id="r-address">—</span>
+            </div>
+          </div>
+
+          <!-- Status summary -->
+          <div class="status-section">
+            <div class="status-item">
+              <span class="s-label">Order Status</span>
+              <span class="status-badge" id="r-order-status-mini">—</span>
+            </div>
+            <div class="status-item">
+              <span class="s-label">Return / Cancel</span>
+              <span class="status-badge" id="r-return-status">—</span>
+            </div>
+            <div class="status-item">
+              <span class="s-label">Refund Status</span>
+              <span class="status-badge" id="r-refund-status">—</span>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="action-row">
+            <button class="btn btn-warning-custom" id="btn-return" onclick="openReturnModal()">
+              <i class="fas fa-undo-alt"></i> Request Return
+            </button>
+            <button class="btn btn-danger" id="btn-cancel" onclick="openCancelModal()">
+              <i class="fas fa-times-circle"></i> Cancel Order
+            </button>
+          </div>
+
+        </div>
+      </div><!-- /order-result-card -->
+
+    </div>
+  </div>
+
+  <!-- ═══════════ RETURN MODAL ═══════════ -->
+  <div class="modal-overlay" id="return-modal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal('return-modal')" aria-label="Close"><i class="fas fa-times"></i></button>
+
+      <div id="return-form-view">
+        <div class="modal-icon return-icon"><i class="fas fa-undo-alt"></i></div>
+        <h2>Request Return</h2>
+        <p class="modal-sub">Please tell us why you'd like to return this order. We'll review your request within 24–48 hours.</p>
+        <div class="modal-form">
+          <div class="form-group">
+            <label>Reason for Return <span>*</span></label>
+            <select id="return-reason" class="form-input">
+              <option value="">— Select a reason —</option>
+              <option>Damaged / Defective product</option>
+              <option>Wrong product delivered</option>
+              <option>Product not as described</option>
+              <option>Missing items in order</option>
+              <option>Quality not satisfactory</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Additional Comments</label>
+            <textarea id="return-comment" placeholder="Describe the issue in detail (optional but helpful)…"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Upload Images / Videos <span style="color:var(--gray);font-weight:500;text-transform:none;letter-spacing:0;">(optional)</span></label>
+            <div class="file-upload-box">
+              <input type="file" id="return-files" accept="image/*,video/*" multiple onchange="updateFileLabel()"/>
+              <i class="fas fa-cloud-upload-alt"></i>
+              <p>Click to upload or drag &amp; drop photos / videos</p>
+              <p class="file-names" id="file-label"></p>
+            </div>
+          </div>
+          <button class="btn btn-warning-custom modal-submit-btn" id="return-submit-btn" onclick="submitReturn()">
+            <span class="btn-text"><i class="fas fa-paper-plane"></i> Submit Return Request</span>
+            <span class="btn-spinner"><i class="fas fa-circle-notch fa-spin"></i> Submitting…</span>
+          </button>
+          <p id="return-error" style="color:#dc3545;font-size:.82rem;text-align:center;display:none;"></p>
+        </div>
+      </div>
+
+      <div class="modal-success" id="return-success-view">
+        <i class="fas fa-check-circle"></i>
+        <h3>Return Request Submitted!</h3>
+        <p>Your return request has been received. We'll review it within 24–48 hours. A confirmation email has been sent to you.</p>
+        <button class="btn btn-brown" style="margin-top:1.2rem;width:100%;" onclick="closeModal('return-modal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ CANCEL MODAL ═══════════ -->
+  <div class="modal-overlay" id="cancel-modal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal('cancel-modal')" aria-label="Close"><i class="fas fa-times"></i></button>
+
+      <div id="cancel-form-view">
+        <div class="modal-icon cancel-icon"><i class="fas fa-times-circle"></i></div>
+        <h2>Cancel Order</h2>
+        <p class="modal-sub">We're sorry to hear you'd like to cancel. Please let us know the reason so we can serve you better.</p>
+        <div class="modal-form">
+          <div class="form-group">
+            <label>Reason for Cancellation <span>*</span></label>
+            <select id="cancel-reason" class="form-input">
+              <option value="">— Select a reason —</option>
+              <option>Ordered by mistake</option>
+              <option>Found a better price elsewhere</option>
+              <option>Delivery time too long</option>
+              <option>Changed my mind</option>
+              <option>Duplicate order placed</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Additional Comments</label>
+            <textarea id="cancel-comment" placeholder="Any additional details (optional)…"></textarea>
+          </div>
+          <button class="btn btn-danger modal-submit-btn" id="cancel-submit-btn" onclick="submitCancellation()">
+            <span class="btn-text"><i class="fas fa-times-circle"></i> Submit Cancellation Request</span>
+            <span class="btn-spinner"><i class="fas fa-circle-notch fa-spin"></i> Submitting…</span>
+          </button>
+          <p id="cancel-error" style="color:#dc3545;font-size:.82rem;text-align:center;display:none;"></p>
+        </div>
+      </div>
+
+      <div class="modal-success" id="cancel-success-view">
+        <i class="fas fa-check-circle"></i>
+        <h3>Cancellation Request Submitted!</h3>
+        <p>Your cancellation request has been received and is being reviewed. A confirmation email has been sent to you.</p>
+        <button class="btn btn-brown" style="margin-top:1.2rem;width:100%;" onclick="closeModal('cancel-modal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ FOOTER ═══════════ -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="https://i.ibb.co/5W7myd6t/Brand-logo-2.png" alt="Bunofeed Logo" class="logo-img footer-logo-img"/>
+        <p>Your companion in healthy living. Honest food for real people.</p>
+        <div class="social-links">
+          <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.facebook.com"  target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+          <a href="https://www.linkedin.com/in/akash-kumar-995739293" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+          <a href="https://www.youtube.com"   target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+          <a href="https://www.x.com"         target="_blank" rel="noopener noreferrer" aria-label="X / Twitter"><i class="fab fa-x-twitter"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="index.html">Home</a>
+        <a href="shop.html">Products</a>
+        <a href="orders.html">My Orders</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="terms.html">Terms of Service</a>
+        <a href="privacy.html">Privacy Policy</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact Us</h4>
+        <p><i class="fas fa-envelope"></i> <a href="mailto:bunofeedhelpdesk@gmail.com">bunofeedhelpdesk@gmail.com</a></p>
+        <p><i class="fas fa-map-marker-alt"></i> Bareilly, UP, India</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Bunofeed. All rights reserved. | <a href="terms.html">Terms of Service</a> | <a href="privacy.html">Privacy Policy</a></p>
+      <span class="footer-highlight">Made with ❤️ for healthy 💪 living.</span>
+    </div>
+  </footer>
+
+  <!-- ═══════════ SCRIPT ═══════════ -->
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzUSZ3kXfdmlYR-HuRDLi4q0hvpwSvBhBoKHqAg1AtVYJBLjR-q_SZc5djUZ8ZXmPTXNQ/exec";
+    const SECRET     = "BUNOFEEDBaheri243201_2026";
+    let currentOrder = null;
+
+    /* ── Hamburger ── */
+    document.getElementById('hamburger').addEventListener('click', function(){
+      this.classList.toggle('active');
+      this.setAttribute('aria-expanded', this.classList.contains('active'));
+      document.getElementById('navLinks').classList.toggle('open');
+    });
+
+    /* ── Track Order ── */
+    async function trackOrder() {
+      const raw = document.getElementById('order-id-input').value.trim();
+const phone = document.getElementById('phone-input').value.trim();
+
+if (!raw || !phone) {
+  showError('Please enter both Order ID and Phone Number.');
+  return;
+}
+
+      hideAll();
+      show('state-loading');
+
+      try {
+        const url = `${SCRIPT_URL}?action=getOrder&orderId=${encodeURIComponent(raw)}&phone=${encodeURIComponent(phone)}&secret=${encodeURIComponent(SECRET)}`;
+        const res  = await fetch(url);
+        const json = await res.json();
+        hide('state-loading');
+
+        if (json.status !== 'success' || !json.order) {
+          showError(json.message || 'Order not found. Please check your Order ID and try again.');
+          return;
+        }
+        currentOrder = json.order;
+        renderOrder(json.order);
+      } catch(err) {
+        hide('state-loading');
+        showError('Network error. Please check your connection and try again.');
+      }
+    }
+    document.getElementById('order-id-input').addEventListener('keydown', e => { if(e.key==='Enter') trackOrder(); });
+
+    /* ── Render Order ── */
+    function renderOrder(o) {
+      document.getElementById('r-order-id').textContent       = o.orderId       || '—';
+      document.getElementById('r-date').textContent           = o.dateTime      || '—';
+      document.getElementById('r-name').textContent           = o.customerName  || '—';
+      document.getElementById('r-phone').textContent          = o.phone         || '—';
+      document.getElementById('r-product').textContent        = o.productName   || '—';
+      document.getElementById('r-qty').textContent            = o.qty           || '—';
+      document.getElementById('r-price').textContent          = o.price   ? `₹${o.price}`  : '—';
+      document.getElementById('r-total').textContent          = o.total   ? `₹${o.total}`  : '—';
+      document.getElementById('r-payment-id').textContent     = o.paymentId     || '—';
+      document.getElementById('r-payment-status').textContent = o.paymentStatus || '—';
+      document.getElementById('r-address').textContent =
+        (o.address && o.pincode) ? `${o.address} – ${o.pincode}` : (o.address || '—');
+
+      const orderStatus  = (o.orderStatus  || '').trim();
+      const returnStatus = (o.returnStatus || '').trim();
+      const refundStatus = (o.refundStatus || '').trim();
+
+      const osBadge = makeBadge(orderStatus,  'order');
+      const rsBadge = makeBadge(returnStatus, 'return');
+      const rfBadge = makeBadge(refundStatus, 'refund');
+
+      setBadge('r-order-status-badge', osBadge, orderStatus  || 'Pending');
+      setBadge('r-order-status-mini',  osBadge, orderStatus  || 'Pending');
+      setBadge('r-return-status',      rsBadge, returnStatus || 'None');
+      setBadge('r-refund-status',      rfBadge, refundStatus || 'None');
+
+      document.getElementById('result-status-bar').style.background = osBadge.barColor;
+
+      /* Button logic */
+      const ls = orderStatus.toLowerCase();
+      const lr = returnStatus.toLowerCase();
+      const activeRequests = ['requested return','requested cancellation','cancelled',
+                              'return request approved','return received'];
+
+      const returnEnabled = ls === 'delivered' && !activeRequests.includes(lr);
+      const cancelEnabled = ls !== 'delivered' && !activeRequests.includes(lr);
+
+      const btnR = document.getElementById('btn-return');
+      const btnC = document.getElementById('btn-cancel');
+      btnR.disabled = !returnEnabled;
+      btnC.disabled = !cancelEnabled;
+      btnR.title = returnEnabled ? '' : (ls !== 'delivered' ? 'Available only after delivery.' : 'A request already exists.');
+      btnC.title = cancelEnabled ? '' : (ls === 'delivered' ? 'Order delivered — use Return instead.' : 'A request already exists.');
+
+      show('order-result-card');
+    }
+
+    function setBadge(id, badge, text) {
+      const el = document.getElementById(id);
+      el.className = 'status-badge ' + badge.cls;
+      el.innerHTML = badge.icon + ' ' + text;
+    }
+
+    /* ── Badge helper ── */
+    function makeBadge(status) {
+      const s = (status || '').toLowerCase().trim();
+      if (!s || s === 'none' || s === '—')     return { cls:'badge-default',   icon:'<i class="fas fa-minus"></i>',              barColor:'#dee2e6' };
+      if (s === 'pending')                      return { cls:'badge-pending',   icon:'<i class="fas fa-clock"></i>',              barColor:'#ffc107' };
+      if (s === 'confirmed')                    return { cls:'badge-confirmed', icon:'<i class="fas fa-check"></i>',              barColor:'#0d6efd' };
+      if (s === 'shipped')                      return { cls:'badge-shipped',   icon:'<i class="fas fa-shipping-fast"></i>',      barColor:'#6f42c1' };
+      if (s === 'delivered')                    return { cls:'badge-delivered', icon:'<i class="fas fa-box-open"></i>',           barColor:'#198754' };
+      if (s === 'cancelled')                    return { cls:'badge-cancelled', icon:'<i class="fas fa-ban"></i>',                barColor:'#dc3545' };
+      if (s.includes('requested cancell'))      return { cls:'badge-cancelled', icon:'<i class="fas fa-hourglass-half"></i>',     barColor:'#dc3545' };
+      if (s.includes('requested return'))       return { cls:'badge-return',    icon:'<i class="fas fa-hourglass-half"></i>',     barColor:'#fd7e14' };
+      if (s.includes('return request appr'))    return { cls:'badge-return',    icon:'<i class="fas fa-thumbs-up"></i>',          barColor:'#fd7e14' };
+      if (s.includes('return received'))        return { cls:'badge-return',    icon:'<i class="fas fa-undo"></i>',               barColor:'#fd7e14' };
+      if (s.includes('refund processed'))       return { cls:'badge-refund',    icon:'<i class="fas fa-rupee-sign"></i>',         barColor:'#20c997' };
+      if (s === 'refunded')                     return { cls:'badge-refund',    icon:'<i class="fas fa-check-double"></i>',       barColor:'#20c997' };
+      if (s.includes('refund failed'))          return { cls:'badge-cancelled', icon:'<i class="fas fa-exclamation-circle"></i>', barColor:'#dc3545' };
+      if (s.includes('refund rejected'))        return { cls:'badge-cancelled', icon:'<i class="fas fa-times-circle"></i>',       barColor:'#dc3545' };
+      return { cls:'badge-default', icon:'<i class="fas fa-info-circle"></i>', barColor:'#6c757d' };
+    }
+
+    /* ── Modals ── */
+    function openReturnModal() {
+      resetModal('return');
+      document.getElementById('return-modal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function openCancelModal() {
+      resetModal('cancel');
+      document.getElementById('cancel-modal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    function resetModal(type) {
+      document.getElementById(`${type}-form-view`).style.display    = '';
+      document.getElementById(`${type}-success-view`).style.display = 'none';
+      if (type === 'return') {
+        document.getElementById('return-reason').value  = '';
+        document.getElementById('return-comment').value = '';
+        document.getElementById('return-files').value   = '';
+        document.getElementById('file-label').textContent = '';
+        document.getElementById('return-error').style.display = 'none';
+      } else {
+        document.getElementById('cancel-reason').value  = '';
+        document.getElementById('cancel-comment').value = '';
+        document.getElementById('cancel-error').style.display = 'none';
+      }
+    }
+    document.getElementById('return-modal').addEventListener('click', function(e){ if(e.target===this) closeModal('return-modal'); });
+    document.getElementById('cancel-modal').addEventListener('click', function(e){ if(e.target===this) closeModal('cancel-modal'); });
+
+    function updateFileLabel() {
+      const files = document.getElementById('return-files').files;
+      document.getElementById('file-label').textContent =
+        files.length ? Array.from(files).map(f=>f.name).join(', ') : '';
+    }
+
+    /* ── Submit Return ── */
+    async function submitReturn() {
+      const reason  = document.getElementById('return-reason').value.trim();
+      const comment = document.getElementById('return-comment').value.trim();
+      const errEl   = document.getElementById('return-error');
+      if (!reason) { errEl.textContent='Please select a reason for return.'; errEl.style.display='block'; return; }
+      errEl.style.display='none';
+
+      const btn = document.getElementById('return-submit-btn');
+      btn.classList.add('loading'); btn.disabled=true;
+      try {
+        const res  = await fetch(SCRIPT_URL, {
+          method:'POST',
+          body: JSON.stringify({ secret:SECRET, action:'updateReturnCancel',
+            data:{ orderId:currentOrder.orderId, newStatus:'Requested Return', reason, comment } })
+        });
+        const json = await res.json();
+        btn.classList.remove('loading'); btn.disabled=false;
+        if (json.status==='success') {
+          document.getElementById('return-form-view').style.display    = 'none';
+          document.getElementById('return-success-view').style.display = 'block';
+          currentOrder.returnStatus = 'Requested Return';
+          renderOrder(currentOrder);
+        } else {
+          errEl.textContent = json.message || 'Something went wrong. Please try again.';
+          errEl.style.display = 'block';
+        }
+      } catch(err) {
+        btn.classList.remove('loading'); btn.disabled=false;
+        errEl.textContent='Network error. Please try again.'; errEl.style.display='block';
+      }
+    }
+
+    /* ── Submit Cancellation ── */
+    async function submitCancellation() {
+      const reason  = document.getElementById('cancel-reason').value.trim();
+      const comment = document.getElementById('cancel-comment').value.trim();
+      const errEl   = document.getElementById('cancel-error');
+      if (!reason) { errEl.textContent='Please select a reason for cancellation.'; errEl.style.display='block'; return; }
+      errEl.style.display='none';
+
+      const btn = document.getElementById('cancel-submit-btn');
+      btn.classList.add('loading'); btn.disabled=true;
+      try {
+        const res  = await fetch(SCRIPT_URL, {
+          method:'POST',
+          body: JSON.stringify({ secret:SECRET, action:'updateReturnCancel',
+            data:{ orderId:currentOrder.orderId, newStatus:'Requested Cancellation', reason, comment } })
+        });
+        const json = await res.json();
+        btn.classList.remove('loading'); btn.disabled=false;
+        if (json.status==='success') {
+          document.getElementById('cancel-form-view').style.display    = 'none';
+          document.getElementById('cancel-success-view').style.display = 'block';
+          currentOrder.returnStatus = 'Requested Cancellation';
+          renderOrder(currentOrder);
+        } else {
+          errEl.textContent = json.message || 'Something went wrong. Please try again.';
+          errEl.style.display = 'block';
+        }
+      } catch(err) {
+        btn.classList.remove('loading'); btn.disabled=false;
+        errEl.textContent='Network error. Please try again.'; errEl.style.display='block';
+      }
+    }
+
+    /* ── Helpers ── */
+    function show(id)  { document.getElementById(id).style.display='block'; }
+    function hide(id)  { document.getElementById(id).style.display='none';  }
+    function hideAll() { hide('state-loading'); hide('state-error'); hide('order-result-card'); }
+    function showError(msg) { document.getElementById('error-text').textContent=msg; show('state-error'); }
+  </script>
+</body>
+</html>
