@@ -12,7 +12,7 @@ window.BUNOFEED_DATA = {
     "currency": "INR",
     "businessName": "Bunofeed",
     "description": "Healthy Natural Foods",
-    "logoUrl": "https://i.ibb.co/5W7myd6t/Brand-logo-2.png",
+    "logoUrl": "https://i.ibb.co/tMLywGyb/Brand-logo-2.png",
     "themeColor": "#ff6b00"
   },
   "campaign": {
